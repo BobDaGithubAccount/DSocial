@@ -31,7 +31,6 @@ async function sendEMAIL() {
             throw "Contracts have not been fetched and thus cannot send an EMAIL!";
         }
         let EMailContract = DSocialContracts.get("EMailContract");
-        //sendEmail(address target, string memory title, string memory about, string memory text, uint256[] memory files
         let files = [];
         await EMailContract.sendEmail(address, title, about, text, files);
         logToClient("Sent EMAIL to " + address + " !!!");
@@ -90,37 +89,9 @@ async function clientLoop() {
 						
                         let EMailContract = new ethers.Contract(response, EMailContractABI, signer);
 						DSocialContracts.set("EMailContract",EMailContract);
-						
-                        let inbox = await EMailContract.getInbox();
-                        for (var ii = 0; ii < inbox.length; ii++) {
-                            let element = inbox[ii];
-                            let inboxTable = document.getElementById("inbox");
-                            let row = inboxTable.insertRow(1);
-                            let titleCollum = row.insertCell(0);
-                            let aboutCollum = row.insertCell(1);
-                            let senderCollum = row.insertCell(2);
-                            let textCollum = row.insertCell(3);
-                            titleCollum.innerHTML = element.title;
-                            aboutCollum.innerHTML = element.about;
-                            senderCollum.innerHTML = element.sender;
-                            textCollum.innerHTML = element.text;
-                        }
 
-                        let sentItems = await EMailContract.getSentItems();
-                        for (var iii = 0; iii < sentItems.length; iii++) {
-                            let element = sentItems[iii];
-                            let sentItemsTable = document.getElementById("sentItems");
-                            let row = sentItemsTable.insertRow(1);
-                            let titleCollum = row.insertCell(0);
-                            let aboutCollum = row.insertCell(1);
-                            let senderCollum = row.insertCell(2);
-                            let textCollum = row.insertCell(3);
-                            titleCollum.innerHTML = element.title;
-                            aboutCollum.innerHTML = element.about;
-                            senderCollum.innerHTML = element.sender;
-                            textCollum.innerHTML = element.text;
-                        }
-
+                        loadInbox();
+                        loadSentItems();
 					}
 					
                     logToClient(response);
@@ -128,16 +99,104 @@ async function clientLoop() {
                 
                 logToClient("Fetched network contracts!");
                 fetchedContracts = true;
+                registerEMailListener();
             }
         }
         catch(err) {
             console.log(err);
+            logToClient("There was an error initializing DSocial:")
             logToClient(err);
             thrownError = true;
         }
     }
     await sleep(1000);
     clientLoop();
+}
+
+async function loadInbox() {
+    try {
+        
+        logToClient("Loading client inbox...");
+        let inbox = await DSocialContracts.get("EMailContract").getInbox();
+        let inboxTable = document.getElementById("inbox");
+        inboxTable.innerHTML = "";
+        let header = inboxTable.insertRow(0);
+        header.insertCell(0).innerHTML = "Title";
+        header.insertCell(1).innerHTML = "About";
+        header.insertCell(2).innerHTML = "To";
+        header.insertCell(3).innerHTML = "Text";
+
+        for (var ii = 0; ii < inbox.length; ii++) {
+            let element = inbox[ii];
+            let row = inboxTable.insertRow(1);
+            let titleCollum = row.insertCell(0);
+            let aboutCollum = row.insertCell(1);
+            let senderCollum = row.insertCell(2);
+            let textCollum = row.insertCell(3);
+            titleCollum.innerHTML = element.title;
+            aboutCollum.innerHTML = element.about;
+            senderCollum.innerHTML = element.sender;
+            textCollum.innerHTML = element.text;
+        }
+        logToClient("Loaded client inbox!");
+    }
+    catch(err) {
+        console.log(err);
+        logToClient("There was an error loading client inbox:");
+        logToClient(err);
+    }
+}
+
+async function loadSentItems() {
+    try {
+        logToClient("Loading client sent-items...");
+        let sentItems = await DSocialContracts.get("EMailContract").getSentItems();
+        let sentItemsTable = document.getElementById("sentItems");
+        sentItemsTable.innerHTML = "";
+        let header = sentItemsTable.insertRow(0);
+        header.insertCell(0).innerHTML = "Title";
+        header.insertCell(1).innerHTML = "About";
+        header.insertCell(2).innerHTML = "To";
+        header.insertCell(3).innerHTML = "Text";
+
+        for (var iii = 0; iii < sentItems.length; iii++) {
+            let element = sentItems[iii];
+            let row = sentItemsTable.insertRow(1);
+            let titleCollum = row.insertCell(0);
+            let aboutCollum = row.insertCell(1);
+            let senderCollum = row.insertCell(2);
+            let textCollum = row.insertCell(3);
+            titleCollum.innerHTML = element.title;
+            aboutCollum.innerHTML = element.about;
+            senderCollum.innerHTML = element.sender;
+            textCollum.innerHTML = element.text;
+        }
+        logToClient("Loaded client sent-items!");
+    }
+    catch(err) {
+        console.log(err);
+        logToClient("There was an error loading client sent-items:");
+        logToClient(err);
+    }
+}
+
+async function EMailListenerLogic(target, sender) {
+    let signerAddress = await signer.getAddress();
+    if(target == signerAddress) {
+        logToClient("Inbox update detected!");
+        loadInbox();
+    }
+    if(sender == signerAddress) {
+        logToClient("Sent-items update detected!");
+        loadSentItems();
+    }
+}
+
+async function registerEMailListener() {
+    let contract = DSocialContracts.get("EMailContract");
+    contract.on("EmailSentEvent", (target, sender) => {
+        EMailListenerLogic(target,sender);
+    });
 }
 
 function logToClient(txt) {
