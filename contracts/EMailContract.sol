@@ -7,6 +7,7 @@ contract EMailContract {
         string about;
         string text;
         uint256[] files;
+        address to;
         address sender;
     }
     
@@ -15,7 +16,7 @@ contract EMailContract {
 
     event EmailSentEvent(address target, address sender);
     function sendEmail(address target, string memory title, string memory about, string memory text, uint256[] memory files) public {
-        EMail memory email = EMail(title,about,text,files,msg.sender);
+        EMail memory email = EMail(title,about,text,files,target,msg.sender);
         GlobalInbox[target].push(email);
         GlobalSentItems[msg.sender].push(email);
         emit EmailSentEvent(target, msg.sender);
