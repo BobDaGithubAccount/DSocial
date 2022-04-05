@@ -200,7 +200,7 @@ async function registerEMailListener() {
 }
 
 function logToClient(txt) {
-    document.getElementById("logging").innerHTML = document.getElementById("logging").innerHTML + txt + "<br>";
+    document.getElementById("logging").innerHTML = document.getElementById("logging").innerHTML + "[" +(new Date().toLocaleString()) + "] " + txt + "<br>";
 }
 
 function sleep(ms) {
