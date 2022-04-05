@@ -37,7 +37,7 @@ fs.readdir(assetFolder, function (err, files) {
         app.get('/assets/'.concat(file), (req, res) => {
             var pathname = url.parse(req.url).pathname;
             let file1 = appDir.concat(pathname);
-            console.log("Request for common access level asset " + file1 + " accepted.");
+            console.log(file1);
             res.sendFile(file1);
         });
     });
@@ -45,7 +45,7 @@ fs.readdir(assetFolder, function (err, files) {
 });
 
 app.get('/', (req, res) => {
-    console.log("Request for index.html accepted.");
+    console.log("index.html");
     res.sendFile(assetFolder.concat("/index.html"));
 });
 
