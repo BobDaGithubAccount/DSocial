@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+  <head>
+    
+    <title>DSocial</title>
+    
+    <link rel="icon" type="image/png" href="assets/icon.png"/>
+
+  </head>
+  <body>
+    
+    <img src="assets/banner.png" alt="DSocial Banner" width="400" height="200"> <br>
+
+    <h1>Welcome to DSocial!</h1><br>
+    
+    <p1>DSocial is a decentralized social media platform that uses solidity smart contracts to store and manage data. <br>
+         You will need MetaMask (or any other compatible web3 wallet provider), to be installed on your browser to be able to interact with this DAPP. </p1> <br> <br>
+
+    <a href="assets/tutorial.html">Tutorial for how to setup wallet for DSocial</a><br>
+    <a href="https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en">MetaMask for chromium browsers</a> <br>
+    <a href="https://addons.mozilla.org/en-GB/firefox/addon/ether-metamask/">MetaMask for firefox</a> <br>
+    <a href="https://metamask.io/">MetaMask website</a> <br> <br>
+
+    <p1 id="broadcasts">Network Broadcasts: <br> </p1> <br>
+
+    <h3>INBOX:</h3>
+    <table id="inbox">
+      <tr>
+        <th>Title</th>
+        <th>About</th>
+        <th>Sender</th>
+        <th>Text</th>
+      </tr>
+      </table><br>
+    
+    <h3>SENT-ITEMS:</h3>
+    <table id="sentItems">
+      <tr>
+        <th>Title</th>
+        <th>About</th>
+        <th>To</th>
+        <th>Text</th>
+      </tr>
+    </table> <br>
+
+
+    <h3>SEND A D-MAIL:</h3>
+
+    <label for="title">Title:</label><br>
+    <input type="text" id="title" name="title"><br>
+
+    <label for="about">About:</label><br>
+    <input type="text" id="about" name="about"><br>
+
+    <label for="address">To:</label><br>
+    <input type="text" id="address" name="address"><br>
+
+    <label for="text">Text:</label><br>
+    <input type="text" id="text" name="text"><br>
+
+    <button type="button" id="sendEMAIL">Send Email</button> <br> <br>
+
+
+    <p1 id="logging">Client Logs: <br> </p1> <br>
+
+    <script type="module" src="assets/client.js"></script>
+
+  </body>
+</html>

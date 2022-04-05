@@ -1,41 +1,56 @@
 const express = require('express');
-const requestIp = require('request-ip');
 const app = express();
-const port = 8000;
+
+const bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({ extended: true }));
+
+const cookieParser = require('cookie-parser');
+app.use(cookieParser()); 
+
+const url = require("url");
+const fs = require('fs');
 const { dirname } = require('path');
+const path  = require('path');
+const readline = require('readline');
+
+const port = 8000;
+
 let appDir = dirname(require.main.filename);
+let assetFolder = appDir.concat('/assets');
+
+fs.readdir(assetFolder, function (err, files) {
+  if (err) {
+    console.error("Could not list the directory.", err);
+    process.exit(1);
+  }
+
+  files.forEach(function (file, index) {
+    var fromPath = path.join(assetFolder, file);
+
+    fs.stat(fromPath, function (error, stat) {
+      if (error) {
+        console.error("Error stating file.", error);
+        return;
+      }
+
+      console.log(fromPath);
+        app.get('/assets/'.concat(file), (req, res) => {
+            var pathname = url.parse(req.url).pathname;
+            let file1 = appDir.concat(pathname);
+            console.log("Request for common access level asset " + file1 + " accepted.");
+            res.sendFile(file1);
+        });
+    });
+  });
+});
 
 app.get('/', (req, res) => {
-    let file = appDir.concat('/index.html');
-    let clientIp = requestIp.getClientIp(req);
-    console.log("Serving " + file + " to " + clientIp)
-    res.sendFile(file);
-});
-app.get('/index.html', (req, res) => {
-    let file = appDir.concat('/index.html');
-    let clientIp = requestIp.getClientIp(req);
-    console.log("Serving " + file + " to " + clientIp)
-    res.sendFile(file);
-});
-app.get('/src/d.png', (req, res) => {
-    let file = appDir.concat('/src/d.png');
-    let clientIp = requestIp.getClientIp(req);
-    console.log("Serving " + file + " to " + clientIp)
-    res.sendFile(file);
-});
-app.get('/src/client.js', (req, res) => {
-    let file = appDir.concat('/src/client.js');
-    let clientIp = requestIp.getClientIp(req);
-    console.log("Serving " + file + " to " + clientIp)
-    res.sendFile(file);
-});
-app.get('/src/ethers.js', (req, res) => {
-    let file = appDir.concat('/src/ethers.js');
-    let clientIp = requestIp.getClientIp(req);
-    console.log("Serving " + file + " to " + clientIp)
-    res.sendFile(file);
+    console.log("Request for index.html accepted.");
+    res.sendFile(assetFolder.concat("/index.html"));
 });
 
 app.listen(port, () => {
     console.log(`DSocial web server listening on port ${port}`);
-}); 
+});
+
+function makeRandomCharacters(length) {var result           = '';var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';var charactersLength = characters.length;for ( var i = 0; i < length; i++ ) {result += characters.charAt(Math.floor(Math.random() * charactersLength));}return result;}

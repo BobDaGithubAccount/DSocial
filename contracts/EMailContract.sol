@@ -1,6 +1,7 @@
 pragma solidity 0.8.10;
 // SPDX-License-Identifier: Proprietary
 contract EMailContract {
+    
     struct EMail {
         string title;
         string about;
@@ -16,7 +17,7 @@ contract EMailContract {
     function sendEmail(address target, string memory title, string memory about, string memory text, uint256[] memory files) public {
         EMail memory email = EMail(title,about,text,files,msg.sender);
         GlobalInbox[target].push(email);
-        GlobalInbox[msg.sender].push(email);
+        GlobalSentItems[msg.sender].push(email);
         emit EmailSentEvent(target, msg.sender);
     }
 
