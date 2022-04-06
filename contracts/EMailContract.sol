@@ -29,4 +29,12 @@ contract EMailContract {
     function getSentItems() public view returns(EMail[] memory) {
         return GlobalSentItems[msg.sender];
     }
+
+    function clearInbox() public {
+        delete GlobalInbox[msg.sender];
+    }
+
+    function clearSentItems() public {
+        delete GlobalSentItems[msg.sender];
+    }
 }

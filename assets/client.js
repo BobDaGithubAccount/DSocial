@@ -1,9 +1,9 @@
 import { ethers } from "./ethers.js";
 
-let MainContractAddress = "0xf9B3Be3924651E3Cb5317aE082a0b35AF97576bE";
+let MainContractAddress = "0x7e87De776c92c7D8282171B0a19BD1f96B71159F";
 let MainContractABI = [ { "inputs": [], "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [], "name": "BroadcastEvent", "type": "event" }, { "anonymous": false, "inputs": [ { "indexed": false, "internalType": "address", "name": "target", "type": "address" } ], "name": "ContractEvent", "type": "event" }, { "anonymous": false, "inputs": [ { "indexed": false, "internalType": "address", "name": "owner", "type": "address" } ], "name": "OwnershipChangeEvent", "type": "event" }, { "inputs": [ { "internalType": "string", "name": "name", "type": "string" } ], "name": "deleteContract", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "getBroadcasts", "outputs": [ { "internalType": "string[]", "name": "", "type": "string[]" } ], "stateMutability": "view", "type": "function" }, { "inputs": [ { "internalType": "string", "name": "name", "type": "string" } ], "name": "getContract", "outputs": [ { "internalType": "address", "name": "", "type": "address" } ], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "getContractNames", "outputs": [ { "internalType": "string[]", "name": "", "type": "string[]" } ], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "owner", "outputs": [ { "internalType": "address", "name": "", "type": "address" } ], "stateMutability": "view", "type": "function" }, { "inputs": [ { "internalType": "string", "name": "name", "type": "string" }, { "internalType": "address", "name": "target", "type": "address" } ], "name": "pushContract", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "internalType": "string", "name": "text", "type": "string" } ], "name": "sendBroadcast", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "internalType": "address", "name": "target", "type": "address" } ], "name": "transferOwnership", "outputs": [], "stateMutability": "nonpayable", "type": "function" } ];
 
-let EMailContractABI = [ { "anonymous": false, "inputs": [ { "indexed": false, "internalType": "address", "name": "target", "type": "address" }, { "indexed": false, "internalType": "address", "name": "sender", "type": "address" } ], "name": "EmailSentEvent", "type": "event" }, { "inputs": [], "name": "getInbox", "outputs": [ { "components": [ { "internalType": "string", "name": "title", "type": "string" }, { "internalType": "string", "name": "about", "type": "string" }, { "internalType": "string", "name": "text", "type": "string" }, { "internalType": "uint256[]", "name": "files", "type": "uint256[]" }, { "internalType": "address", "name": "to", "type": "address" }, { "internalType": "address", "name": "sender", "type": "address" } ], "internalType": "struct EMailContract.EMail[]", "name": "", "type": "tuple[]" } ], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "getSentItems", "outputs": [ { "components": [ { "internalType": "string", "name": "title", "type": "string" }, { "internalType": "string", "name": "about", "type": "string" }, { "internalType": "string", "name": "text", "type": "string" }, { "internalType": "uint256[]", "name": "files", "type": "uint256[]" }, { "internalType": "address", "name": "to", "type": "address" }, { "internalType": "address", "name": "sender", "type": "address" } ], "internalType": "struct EMailContract.EMail[]", "name": "", "type": "tuple[]" } ], "stateMutability": "view", "type": "function" }, { "inputs": [ { "internalType": "address", "name": "target", "type": "address" }, { "internalType": "string", "name": "title", "type": "string" }, { "internalType": "string", "name": "about", "type": "string" }, { "internalType": "string", "name": "text", "type": "string" }, { "internalType": "uint256[]", "name": "files", "type": "uint256[]" } ], "name": "sendEmail", "outputs": [], "stateMutability": "nonpayable", "type": "function" } ];
+let EMailContractABI = [ { "anonymous": false, "inputs": [ { "indexed": false, "internalType": "address", "name": "target", "type": "address" }, { "indexed": false, "internalType": "address", "name": "sender", "type": "address" } ], "name": "EmailSentEvent", "type": "event" }, { "inputs": [], "name": "clearInbox", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "clearSentItems", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "getInbox", "outputs": [ { "components": [ { "internalType": "string", "name": "title", "type": "string" }, { "internalType": "string", "name": "about", "type": "string" }, { "internalType": "string", "name": "text", "type": "string" }, { "internalType": "uint256[]", "name": "files", "type": "uint256[]" }, { "internalType": "address", "name": "to", "type": "address" }, { "internalType": "address", "name": "sender", "type": "address" } ], "internalType": "struct EMailContract.EMail[]", "name": "", "type": "tuple[]" } ], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "getSentItems", "outputs": [ { "components": [ { "internalType": "string", "name": "title", "type": "string" }, { "internalType": "string", "name": "about", "type": "string" }, { "internalType": "string", "name": "text", "type": "string" }, { "internalType": "uint256[]", "name": "files", "type": "uint256[]" }, { "internalType": "address", "name": "to", "type": "address" }, { "internalType": "address", "name": "sender", "type": "address" } ], "internalType": "struct EMailContract.EMail[]", "name": "", "type": "tuple[]" } ], "stateMutability": "view", "type": "function" }, { "inputs": [ { "internalType": "address", "name": "target", "type": "address" }, { "internalType": "string", "name": "title", "type": "string" }, { "internalType": "string", "name": "about", "type": "string" }, { "internalType": "string", "name": "text", "type": "string" }, { "internalType": "uint256[]", "name": "files", "type": "uint256[]" } ], "name": "sendEmail", "outputs": [], "stateMutability": "nonpayable", "type": "function" } ];
 
 let provider = "";
 let signer = "";
@@ -19,6 +19,29 @@ connectToWeb3Provider();
 clientLoop();
 
 document.getElementById("sendEMAIL").addEventListener("click", sendEMAIL);
+document.getElementById("CLEARINBOX").addEventListener("click", clearInbox);
+document.getElementById("CLEAR_SENT_ITEMS").addEventListener("click", clearSentItems);
+
+async function clearInbox() {
+    logToClient("Clearing client inbox...");
+    if(fetchedContracts==false) {
+        throw "Contracts have not been fetched and thus cannot clear inbox!";
+    }
+    let EMailContract = DSocialContracts.get("EMailContract");
+    await EMailContract.clearInbox();
+    logToClient("Cleared client inbox!");
+}
+
+async function clearSentItems() {
+    logToClient("Clearing client sent-items...");
+    if(fetchedContracts==false) {
+        throw "Contracts have not been fetched and thus cannot clear sent-items!";
+    }
+    let EMailContract = DSocialContracts.get("EMailContract");
+    await EMailContract.clearSentItems();
+    logToClient("Cleared client sent-items!");
+}
+
 
 async function sendEMAIL() {
     let title = document.getElementById("title").value;
