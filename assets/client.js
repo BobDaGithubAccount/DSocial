@@ -142,12 +142,12 @@ async function loadInbox() {
         logToClient("Loading client inbox...");
         let inbox = await DSocialContracts.get("EMailContract").getInbox();
         let inboxTable = document.getElementById("inbox");
-        inboxTable.innerHTML = "";
+        inboxTable.innerText = "";
         let header = inboxTable.insertRow(0);
-        header.insertCell(0).innerHTML = "Title";
-        header.insertCell(1).innerHTML = "About";
-        header.insertCell(2).innerHTML = "From";
-        header.insertCell(3).innerHTML = "Text";
+        header.insertCell(0).innerText = "Title";
+        header.insertCell(1).innerText = "About";
+        header.insertCell(2).innerText = "From";
+        header.insertCell(3).innerText = "Text";
 
         for (var ii = 0; ii < inbox.length; ii++) {
             let element = inbox[ii];
@@ -156,10 +156,10 @@ async function loadInbox() {
             let aboutCollum = row.insertCell(1);
             let senderCollum = row.insertCell(2);
             let textCollum = row.insertCell(3);
-            titleCollum.innerHTML = element.title;
-            aboutCollum.innerHTML = element.about;
-            senderCollum.innerHTML = element.sender;
-            textCollum.innerHTML = element.text;
+            titleCollum.innerText = element.title;
+            aboutCollum.innerText = element.about;
+            senderCollum.innerText = element.sender;
+            textCollum.innerText = element.text;
         }
         logToClient("Loaded client inbox!");
     }
@@ -175,12 +175,12 @@ async function loadSentItems() {
         logToClient("Loading client sent-items...");
         let sentItems = await DSocialContracts.get("EMailContract").getSentItems();
         let sentItemsTable = document.getElementById("sentItems");
-        sentItemsTable.innerHTML = "";
+        sentItemsTable.innerText = "";
         let header = sentItemsTable.insertRow(0);
-        header.insertCell(0).innerHTML = "Title";
-        header.insertCell(1).innerHTML = "About";
-        header.insertCell(2).innerHTML = "To";
-        header.insertCell(3).innerHTML = "Text";
+        header.insertCell(0).innerText = "Title";
+        header.insertCell(1).innerText = "About";
+        header.insertCell(2).innerText = "To";
+        header.insertCell(3).innerText = "Text";
 
         for (var iii = 0; iii < sentItems.length; iii++) {
             let element = sentItems[iii];
@@ -189,10 +189,10 @@ async function loadSentItems() {
             let aboutCollum = row.insertCell(1);
             let senderCollum = row.insertCell(2);
             let textCollum = row.insertCell(3);
-            titleCollum.innerHTML = element.title;
-            aboutCollum.innerHTML = element.about;
-            senderCollum.innerHTML = element.to;
-            textCollum.innerHTML = element.text;
+            titleCollum.innerText = element.title;
+            aboutCollum.innerText = element.about;
+            senderCollum.innerText = element.to;
+            textCollum.innerText = element.text;
         }
         logToClient("Loaded client sent-items!");
     }

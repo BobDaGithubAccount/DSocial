@@ -45,7 +45,7 @@ fs.readdir(assetFolder, function (err, files) {
 });
 
 app.get('/', (req, res) => {
-    console.log("index.html");
+    console.log(assetFolder.concat("/index.html"));
     res.sendFile(assetFolder.concat("/index.html"));
 });
 
