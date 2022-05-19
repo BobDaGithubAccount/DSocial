@@ -1,3 +1,3 @@
-@cd G:\Stanley_Programming\DSocial
-@set PATH=G:\njs;%PATH%
+@cd C:\Users\duckb\Documents\GitHub\DSocial
+@set PATH=D:\njs;%PATH%
 @cmd.exe /K

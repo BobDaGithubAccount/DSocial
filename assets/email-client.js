@@ -1,14 +1,12 @@
 import { ethers } from "./ethers.js";
 
-let MainContractAddress = "0x7e87De776c92c7D8282171B0a19BD1f96B71159F";
-let MainContractABI = [ { "inputs": [], "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [], "name": "BroadcastEvent", "type": "event" }, { "anonymous": false, "inputs": [ { "indexed": false, "internalType": "address", "name": "target", "type": "address" } ], "name": "ContractEvent", "type": "event" }, { "anonymous": false, "inputs": [ { "indexed": false, "internalType": "address", "name": "owner", "type": "address" } ], "name": "OwnershipChangeEvent", "type": "event" }, { "inputs": [ { "internalType": "string", "name": "name", "type": "string" } ], "name": "deleteContract", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "getBroadcasts", "outputs": [ { "internalType": "string[]", "name": "", "type": "string[]" } ], "stateMutability": "view", "type": "function" }, { "inputs": [ { "internalType": "string", "name": "name", "type": "string" } ], "name": "getContract", "outputs": [ { "internalType": "address", "name": "", "type": "address" } ], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "getContractNames", "outputs": [ { "internalType": "string[]", "name": "", "type": "string[]" } ], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "owner", "outputs": [ { "internalType": "address", "name": "", "type": "address" } ], "stateMutability": "view", "type": "function" }, { "inputs": [ { "internalType": "string", "name": "name", "type": "string" }, { "internalType": "address", "name": "target", "type": "address" } ], "name": "pushContract", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "internalType": "string", "name": "text", "type": "string" } ], "name": "sendBroadcast", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "internalType": "address", "name": "target", "type": "address" } ], "name": "transferOwnership", "outputs": [], "stateMutability": "nonpayable", "type": "function" } ];
-
+let EmailContractAddress = "0x52195d6A559E8Ffec94cAC9D9C7130E9471e4A6d";
 let EMailContractABI = [ { "anonymous": false, "inputs": [ { "indexed": false, "internalType": "address", "name": "target", "type": "address" }, { "indexed": false, "internalType": "address", "name": "sender", "type": "address" } ], "name": "EmailSentEvent", "type": "event" }, { "inputs": [], "name": "clearInbox", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "clearSentItems", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "getInbox", "outputs": [ { "components": [ { "internalType": "string", "name": "title", "type": "string" }, { "internalType": "string", "name": "about", "type": "string" }, { "internalType": "string", "name": "text", "type": "string" }, { "internalType": "uint256[]", "name": "files", "type": "uint256[]" }, { "internalType": "address", "name": "to", "type": "address" }, { "internalType": "address", "name": "sender", "type": "address" } ], "internalType": "struct EMailContract.EMail[]", "name": "", "type": "tuple[]" } ], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "getSentItems", "outputs": [ { "components": [ { "internalType": "string", "name": "title", "type": "string" }, { "internalType": "string", "name": "about", "type": "string" }, { "internalType": "string", "name": "text", "type": "string" }, { "internalType": "uint256[]", "name": "files", "type": "uint256[]" }, { "internalType": "address", "name": "to", "type": "address" }, { "internalType": "address", "name": "sender", "type": "address" } ], "internalType": "struct EMailContract.EMail[]", "name": "", "type": "tuple[]" } ], "stateMutability": "view", "type": "function" }, { "inputs": [ { "internalType": "address", "name": "target", "type": "address" }, { "internalType": "string", "name": "title", "type": "string" }, { "internalType": "string", "name": "about", "type": "string" }, { "internalType": "string", "name": "text", "type": "string" }, { "internalType": "uint256[]", "name": "files", "type": "uint256[]" } ], "name": "sendEmail", "outputs": [], "stateMutability": "nonpayable", "type": "function" } ];
 
+let EMailContract = "EMailContract";
 let provider = "";
 let signer = "";
 let connected = false;
-let fetchedBroadcasts = false;
 
 let DSocialContracts = new Map();
 let fetchedContracts = false;
@@ -21,48 +19,6 @@ clientLoop();
 document.getElementById("sendEMAIL").addEventListener("click", sendEMAIL);
 document.getElementById("CLEARINBOX").addEventListener("click", clearInbox);
 document.getElementById("CLEAR_SENT_ITEMS").addEventListener("click", clearSentItems);
-
-async function clearInbox() {
-    logToClient("Clearing client inbox...");
-    if(fetchedContracts==false) {
-        throw "Contracts have not been fetched and thus cannot clear inbox!";
-    }
-    let EMailContract = DSocialContracts.get("EMailContract");
-    await EMailContract.clearInbox();
-    logToClient("Cleared client inbox!");
-}
-
-async function clearSentItems() {
-    logToClient("Clearing client sent-items...");
-    if(fetchedContracts==false) {
-        throw "Contracts have not been fetched and thus cannot clear sent-items!";
-    }
-    let EMailContract = DSocialContracts.get("EMailContract");
-    await EMailContract.clearSentItems();
-    logToClient("Cleared client sent-items!");
-}
-
-
-async function sendEMAIL() {
-    let title = document.getElementById("title").value;
-    let about = document.getElementById("about").value;
-    let address = document.getElementById("address").value;
-    let text = document.getElementById("text").value;
-    try {
-        logToClient("Sending EMAIL to " + address + " ...");
-        if(fetchedContracts==false) {
-            throw "Contracts have not been fetched and thus cannot send an EMAIL!";
-        }
-        let EMailContract = DSocialContracts.get("EMailContract");
-        let files = [];
-        await EMailContract.sendEmail(address, title, about, text, files);
-        logToClient("Sent EMAIL to " + address + " !!!");
-    }
-    catch(err) {
-        console.log(err);
-        logToClient(err);
-    }
-}
 
 async function connectToWeb3Provider() {
     logToClient("Connecting to web3 provider...");
@@ -81,47 +37,28 @@ async function connectToWeb3Provider() {
         logToClient("There was an error connecting to web3 provider:");
         logToClient(err);
         connected = false;
+        thrownError = true;
     }
 }
 
 async function clientLoop() {
     if(connected == true && thrownError == false) {
         try {
-            const MainContract = new ethers.Contract( MainContractAddress , MainContractABI , signer );
-			DSocialContracts.set("MainContract",MainContract);
-            if(fetchedBroadcasts == false) {
-                logToClient("Fetching network broadcasts...");
-                var broadcasts = await MainContract.getBroadcasts();
-                broadcasts.forEach(function (item, index) {
-                    document.getElementById("broadcasts").innerHTML = document.getElementById("broadcasts").innerHTML + item + "<br>";
-                });
-                fetchedBroadcasts = true;
-                logToClient("Fetched network broadcasts!");
-            }
             if(fetchedContracts == false) {
                 
-                logToClient("Fetching network contracts...");
-                var contractNames = await MainContract.getContractNames();
-                
-                for (var i = 0; i < contractNames.length; i++) {
-					
-                    logToClient(contractNames[i]);
-                    var response = await MainContract.getContract(contractNames[i]);
-					
-                    if(contractNames[i] == "EMailContract") {
-						
-                        let EMailContract = new ethers.Contract(response, EMailContractABI, signer);
-						DSocialContracts.set("EMailContract",EMailContract);
-
-                        loadInbox();
-                        loadSentItems();
-					}
-					
-                    logToClient(response);
-                }
-                
-                logToClient("Fetched network contracts!");
                 fetchedContracts = true;
+
+                logToClient("Fetching contract...");
+                
+                let EMailContract1 = new ethers.Contract(EmailContractAddress, EMailContractABI, signer);
+                DSocialContracts.set(EMailContract,EMailContract1);
+
+                logToClient(EmailContractAddress);
+
+                loadInbox();
+                loadSentItems();
+                
+                logToClient("Fetched contract!");
                 registerEMailListener();
             }
         }
@@ -140,7 +77,7 @@ async function loadInbox() {
     try {
         
         logToClient("Loading client inbox...");
-        let inbox = await DSocialContracts.get("EMailContract").getInbox();
+        let inbox = await DSocialContracts.get(EMailContract).getInbox();
         let inboxTable = document.getElementById("inbox");
         inboxTable.innerText = "";
         let header = inboxTable.insertRow(0);
@@ -149,7 +86,7 @@ async function loadInbox() {
         header.insertCell(2).innerText = "From";
         header.insertCell(3).innerText = "Text";
 
-        for (var ii = 0; ii < inbox.length; ii++) {
+        for (let ii = 0; ii < inbox.length; ii++) {
             let element = inbox[ii];
             let row = inboxTable.insertRow(1);
             let titleCollum = row.insertCell(0);
@@ -167,13 +104,14 @@ async function loadInbox() {
         console.log(err);
         logToClient("There was an error loading client inbox:");
         logToClient(err);
+        thrownError = true;
     }
 }
 
 async function loadSentItems() {
     try {
         logToClient("Loading client sent-items...");
-        let sentItems = await DSocialContracts.get("EMailContract").getSentItems();
+        let sentItems = await DSocialContracts.get(EMailContract).getSentItems();
         let sentItemsTable = document.getElementById("sentItems");
         sentItemsTable.innerText = "";
         let header = sentItemsTable.insertRow(0);
@@ -182,7 +120,7 @@ async function loadSentItems() {
         header.insertCell(2).innerText = "To";
         header.insertCell(3).innerText = "Text";
 
-        for (var iii = 0; iii < sentItems.length; iii++) {
+        for (let iii = 0; iii < sentItems.length; iii++) {
             let element = sentItems[iii];
             let row = sentItemsTable.insertRow(1);
             let titleCollum = row.insertCell(0);
@@ -200,26 +138,98 @@ async function loadSentItems() {
         console.log(err);
         logToClient("There was an error loading client sent-items:");
         logToClient(err);
+        thrownError = true;
+    }
+}
+
+async function clearInbox() {
+    try {
+        logToClient("Clearing client inbox...");
+        if(fetchedContracts==false) {
+            throw "Contracts have not been fetched and thus cannot clear inbox!";
+        }
+        let EMailContract = DSocialContracts.get(EMailContract);
+        await EMailContract.clearInbox();
+        logToClient("Cleared client inbox!");
+    }
+    catch(err) {
+        console.log(err);
+        logToClient(err);
+        thrownError = true;
+    }
+}
+
+async function clearSentItems() {
+    try {
+        logToClient("Clearing client sent-items...");
+        if(fetchedContracts==false) {
+            throw "Contracts have not been fetched and thus cannot clear sent-items!";
+        }
+        let EMailContract = DSocialContracts.get(EMailContract);
+        await EMailContract.clearSentItems();
+        logToClient("Cleared client sent-items!");
+    }
+    catch(err) {
+        console.log(err);
+        logToClient(err);
+        thrownError = true;
+    }
+}
+
+
+async function sendEMAIL() {
+    try {
+        let title = document.getElementById("title").value;
+        let about = document.getElementById("about").value;
+        let address = document.getElementById("address").value;
+        let text = document.getElementById("text").value;
+        logToClient("Sending EMAIL to " + address + " ...");
+        if(fetchedContracts==false) {
+            throw "Contracts have not been fetched and thus cannot send an EMAIL!";
+        }
+        let EMailContract = DSocialContracts.get(EMailContract);
+        let files = [];
+        await EMailContract.sendEmail(address, title, about, text, files);
+        logToClient("Sent EMAIL to " + address + " !!!");
+    }
+    catch(err) {
+        console.log(err);
+        logToClient(err);
+        thrownError = true;
     }
 }
 
 async function EMailListenerLogic(target, sender) {
-    let signerAddress = await signer.getAddress();
-    if(target == signerAddress) {
-        logToClient("Inbox update detected!");
-        loadInbox();
+    try {
+        let signerAddress = await signer.getAddress();
+        if(target == signerAddress) {
+            logToClient("Inbox update detected!");
+            loadInbox();
+        }
+        if(sender == signerAddress) {
+            logToClient("Sent-items update detected!");
+            loadSentItems();
+        }
     }
-    if(sender == signerAddress) {
-        logToClient("Sent-items update detected!");
-        loadSentItems();
+    catch(err) {
+        console.log(err);
+        logToClient(err);
+        thrownError = true;
     }
 }
 
 async function registerEMailListener() {
-    let contract = DSocialContracts.get("EMailContract");
-    contract.on("EmailSentEvent", (target, sender) => {
-        EMailListenerLogic(target,sender);
-    });
+    try {
+        let contract = DSocialContracts.get(EMailContract);
+        contract.on("EmailSentEvent", (target, sender) => {
+            EMailListenerLogic(target,sender);
+        });
+    }
+    catch(err) {
+        console.log(err);
+        logToClient(err);
+        thrownError = true;
+    }
 }
 
 function logToClient(txt) {

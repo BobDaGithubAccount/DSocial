@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+  <head>
+    
+    <title>DSocial</title>
+    
+    <link rel="icon" type="image/png" href="icon.png"/>
+
+  </head>
+  <body>
+    
+
+
+    <img src="banner.png" alt="DSocial Banner" width="200" height="100"> <br>
+
+    <a href="/">Go Back</a> <br>
+
+    
+
+    <h3>INBOX:</h3>
+    <table id="inbox">
+      <tr>
+        <th>Title</th>
+        <th>About</th>
+        <th>Sender</th>
+        <th>Text</th>
+      </tr>
+      </table><br>
+    <button id="CLEARINBOX">CLEAR INBOX</button><br>
+
+
+
+    <h3>SENT-ITEMS:</h3>
+    <table id="sentItems">
+      <tr>
+        <th>Title</th>
+        <th>About</th>
+        <th>To</th>
+        <th>Text</th>
+      </tr>
+    </table> <br>
+    <button id="CLEAR_SENT_ITEMS">CLEAR SENT-ITEMS</button><br>
+
+
+
+    <h3>SEND A D-MAIL:</h3>
+
+    <label for="title">Title:</label><br>
+    <input type="text" id="title" name="title"><br>
+
+    <label for="about">About:</label><br>
+    <input type="text" id="about" name="about"><br>
+
+    <label for="address">To:</label><br>
+    <input type="text" id="address" name="address"><br>
+
+    <label for="text">Text:</label><br>
+    <input type="text" id="text" name="text"><br>
+
+    <button type="button" id="sendEMAIL">Send Email</button> <br> <br>
+
+
+
+    <p1 id="logging">Client Logs: <br> </p1> <br>
+
+
+
+    <script type="module" src="email-client.js"></script>
+
+  </body>
+</html>

@@ -1,4 +1,4 @@
-pragma solidity 0.8.10;
+pragma solidity 0.8.14;
 // SPDX-License-Identifier: Proprietary
 contract EMailContract {
     
