@@ -1,3 +1,3 @@
-@cd C:\Users\duckb\Documents\GitHub\DSocial
-@set PATH=C:\Users\duckb\Documents\GitHub\DSocial\njs;%PATH%
+@set PATH=./njs;%PATH%
+node index.js
 @cmd.exe /K

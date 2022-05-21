@@ -14,12 +14,13 @@ contract EMailContract {
     mapping(address=>EMail[]) GlobalInbox;
     mapping(address=>EMail[]) GlobalSentItems;
 
-    event EmailSentEvent(address target, address sender);
+    event UpdateInboxEvent(address person);
     function sendEmail(address target, string memory title, string memory about, string memory text, uint256[] memory files) public {
         EMail memory email = EMail(title,about,text,files,target,msg.sender);
         GlobalInbox[target].push(email);
         GlobalSentItems[msg.sender].push(email);
-        emit EmailSentEvent(target, msg.sender);
+        emit UpdateInboxEvent(target);
+        emit UpdateInboxEvent(msg.sender);
     }
 
     function getInbox() public view returns(EMail[] memory) {
@@ -32,9 +33,11 @@ contract EMailContract {
 
     function clearInbox() public {
         delete GlobalInbox[msg.sender];
+        emit UpdateInboxEvent(msg.sender);
     }
 
     function clearSentItems() public {
         delete GlobalSentItems[msg.sender];
+        emit UpdateInboxEvent(msg.sender);
     }
 }

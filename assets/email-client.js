@@ -1,7 +1,7 @@
 import { ethers } from "./ethers.js";
 
-let EmailContractAddress = "0x52195d6A559E8Ffec94cAC9D9C7130E9471e4A6d";
-let EMailContractABI = [ { "anonymous": false, "inputs": [ { "indexed": false, "internalType": "address", "name": "target", "type": "address" }, { "indexed": false, "internalType": "address", "name": "sender", "type": "address" } ], "name": "EmailSentEvent", "type": "event" }, { "inputs": [], "name": "clearInbox", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "clearSentItems", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "getInbox", "outputs": [ { "components": [ { "internalType": "string", "name": "title", "type": "string" }, { "internalType": "string", "name": "about", "type": "string" }, { "internalType": "string", "name": "text", "type": "string" }, { "internalType": "uint256[]", "name": "files", "type": "uint256[]" }, { "internalType": "address", "name": "to", "type": "address" }, { "internalType": "address", "name": "sender", "type": "address" } ], "internalType": "struct EMailContract.EMail[]", "name": "", "type": "tuple[]" } ], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "getSentItems", "outputs": [ { "components": [ { "internalType": "string", "name": "title", "type": "string" }, { "internalType": "string", "name": "about", "type": "string" }, { "internalType": "string", "name": "text", "type": "string" }, { "internalType": "uint256[]", "name": "files", "type": "uint256[]" }, { "internalType": "address", "name": "to", "type": "address" }, { "internalType": "address", "name": "sender", "type": "address" } ], "internalType": "struct EMailContract.EMail[]", "name": "", "type": "tuple[]" } ], "stateMutability": "view", "type": "function" }, { "inputs": [ { "internalType": "address", "name": "target", "type": "address" }, { "internalType": "string", "name": "title", "type": "string" }, { "internalType": "string", "name": "about", "type": "string" }, { "internalType": "string", "name": "text", "type": "string" }, { "internalType": "uint256[]", "name": "files", "type": "uint256[]" } ], "name": "sendEmail", "outputs": [], "stateMutability": "nonpayable", "type": "function" } ];
+let EmailContractAddress = "0xD97ACb76b4Aea48C4b14127a248b6E3101c1f243";
+let EMailContractABI = [ { "anonymous": false, "inputs": [ { "indexed": false, "internalType": "address", "name": "person", "type": "address" } ], "name": "UpdateInboxEvent", "type": "event" }, { "inputs": [], "name": "clearInbox", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "clearSentItems", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "getInbox", "outputs": [ { "components": [ { "internalType": "string", "name": "title", "type": "string" }, { "internalType": "string", "name": "about", "type": "string" }, { "internalType": "string", "name": "text", "type": "string" }, { "internalType": "uint256[]", "name": "files", "type": "uint256[]" }, { "internalType": "address", "name": "to", "type": "address" }, { "internalType": "address", "name": "sender", "type": "address" } ], "internalType": "struct EMailContract.EMail[]", "name": "", "type": "tuple[]" } ], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "getSentItems", "outputs": [ { "components": [ { "internalType": "string", "name": "title", "type": "string" }, { "internalType": "string", "name": "about", "type": "string" }, { "internalType": "string", "name": "text", "type": "string" }, { "internalType": "uint256[]", "name": "files", "type": "uint256[]" }, { "internalType": "address", "name": "to", "type": "address" }, { "internalType": "address", "name": "sender", "type": "address" } ], "internalType": "struct EMailContract.EMail[]", "name": "", "type": "tuple[]" } ], "stateMutability": "view", "type": "function" }, { "inputs": [ { "internalType": "address", "name": "target", "type": "address" }, { "internalType": "string", "name": "title", "type": "string" }, { "internalType": "string", "name": "about", "type": "string" }, { "internalType": "string", "name": "text", "type": "string" }, { "internalType": "uint256[]", "name": "files", "type": "uint256[]" } ], "name": "sendEmail", "outputs": [], "stateMutability": "nonpayable", "type": "function" } ];
 
 let EMailContract = "EMailContract";
 let provider = "";
@@ -16,6 +16,8 @@ let thrownError = false;
 connectToWeb3Provider();
 clientLoop();
 
+document.getElementById("clear").addEventListener("click", clear);
+document.getElementById("refresh").addEventListener("click", refresh);
 document.getElementById("sendEMAIL").addEventListener("click", sendEMAIL);
 document.getElementById("CLEARINBOX").addEventListener("click", clearInbox);
 document.getElementById("CLEAR_SENT_ITEMS").addEventListener("click", clearSentItems);
@@ -55,15 +57,13 @@ async function clientLoop() {
 
                 logToClient(EmailContractAddress);
 
-                loadInbox();
-                loadSentItems();
+                refresh();
                 
                 logToClient("Fetched contract!");
                 registerEMailListener();
             }
         }
         catch(err) {
-            console.log(err);
             logToClient("There was an error initializing DSocial:")
             logToClient(err);
             thrownError = true;
@@ -101,7 +101,6 @@ async function loadInbox() {
         logToClient("Loaded client inbox!");
     }
     catch(err) {
-        console.log(err);
         logToClient("There was an error loading client inbox:");
         logToClient(err);
         thrownError = true;
@@ -135,7 +134,6 @@ async function loadSentItems() {
         logToClient("Loaded client sent-items!");
     }
     catch(err) {
-        console.log(err);
         logToClient("There was an error loading client sent-items:");
         logToClient(err);
         thrownError = true;
@@ -148,12 +146,11 @@ async function clearInbox() {
         if(fetchedContracts==false) {
             throw "Contracts have not been fetched and thus cannot clear inbox!";
         }
-        let EMailContract = DSocialContracts.get(EMailContract);
-        await EMailContract.clearInbox();
+        let EMailContract1 = DSocialContracts.get(EMailContract);
+        await EMailContract1.clearInbox();
         logToClient("Cleared client inbox!");
     }
     catch(err) {
-        console.log(err);
         logToClient(err);
         thrownError = true;
     }
@@ -165,12 +162,11 @@ async function clearSentItems() {
         if(fetchedContracts==false) {
             throw "Contracts have not been fetched and thus cannot clear sent-items!";
         }
-        let EMailContract = DSocialContracts.get(EMailContract);
-        await EMailContract.clearSentItems();
+        let EMailContract1 = DSocialContracts.get(EMailContract);
+        await EMailContract1.clearSentItems();
         logToClient("Cleared client sent-items!");
     }
     catch(err) {
-        console.log(err);
         logToClient(err);
         thrownError = true;
     }
@@ -187,32 +183,31 @@ async function sendEMAIL() {
         if(fetchedContracts==false) {
             throw "Contracts have not been fetched and thus cannot send an EMAIL!";
         }
-        let EMailContract = DSocialContracts.get(EMailContract);
+        let EMailContract1 = DSocialContracts.get(EMailContract);
         let files = [];
-        await EMailContract.sendEmail(address, title, about, text, files);
+        await EMailContract1.sendEmail(address, title, about, text, files);
         logToClient("Sent EMAIL to " + address + " !!!");
     }
     catch(err) {
-        console.log(err);
         logToClient(err);
         thrownError = true;
     }
 }
 
-async function EMailListenerLogic(target, sender) {
+async function refresh() {
+    loadInbox();
+    loadSentItems();
+}
+
+async function EMailListenerLogic(person) {
     try {
         let signerAddress = await signer.getAddress();
-        if(target == signerAddress) {
+        if(person == signerAddress) {
             logToClient("Inbox update detected!");
-            loadInbox();
-        }
-        if(sender == signerAddress) {
-            logToClient("Sent-items update detected!");
-            loadSentItems();
+            refresh();
         }
     }
     catch(err) {
-        console.log(err);
         logToClient(err);
         thrownError = true;
     }
@@ -221,19 +216,23 @@ async function EMailListenerLogic(target, sender) {
 async function registerEMailListener() {
     try {
         let contract = DSocialContracts.get(EMailContract);
-        contract.on("EmailSentEvent", (target, sender) => {
-            EMailListenerLogic(target,sender);
+        contract.on("UpdateInboxEvent", (person) => {
+            EMailListenerLogic(person);
         });
     }
     catch(err) {
-        console.log(err);
         logToClient(err);
         thrownError = true;
     }
 }
 
 function logToClient(txt) {
+    console.log(txt);
     document.getElementById("logging").innerHTML = document.getElementById("logging").innerHTML + "[" +(new Date().toLocaleString()) + "] " + txt + "<br>";
+}
+
+async function clear() {
+    document.getElementById("logging").innerHTML = "Client Logs: <br> ";
 }
 
 function sleep(ms) {

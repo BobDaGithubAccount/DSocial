@@ -8,10 +8,14 @@ let signer = "";
 let connected = false;
 let fetchedBroadcasts = false;
 
+let DSocialContracts = new Map();
 let thrownError = false;
 
 connectToWeb3Provider();
 clientLoop();
+
+document.getElementById("clear").addEventListener("click", clear);
+document.getElementById("refresh").addEventListener("click", loadBroadcasts);
 
 async function connectToWeb3Provider() {
     logToClient("Connecting to web3 provider...");
@@ -37,18 +41,13 @@ async function clientLoop() {
     if(connected == true && thrownError == false) {
         try {
             const MainContract = new ethers.Contract( MainContractAddress , MainContractABI , signer );
+            DSocialContracts.set("MainContract", MainContract);
             if(fetchedBroadcasts == false) {
-                logToClient("Fetching network broadcasts...");
-                var broadcasts = await MainContract.getBroadcasts();
-                broadcasts.forEach(function (item, index) {
-                    document.getElementById("broadcasts").innerHTML = document.getElementById("broadcasts").innerHTML + item + "<br>";
-                });
-                fetchedBroadcasts = true;
-                logToClient("Fetched network broadcasts!");
+                loadBroadcasts();
+                registerBroadcastListener();
             }
         }
         catch(err) {
-            console.log(err);
             logToClient("There was an error initializing DSocial:")
             logToClient(err);
             thrownError = true;
@@ -58,8 +57,48 @@ async function clientLoop() {
     clientLoop();
 }
 
+async function loadBroadcasts() {
+    let contract = DSocialContracts.get("MainContract");
+    logToClient("Fetching network broadcasts...");
+    let broadcasts = await contract.getBroadcasts();
+    document.getElementById("broadcasts").innerHTML = "Network Broadcasts: <br> ";
+    broadcasts.forEach(function (item, index) {
+        document.getElementById("broadcasts").innerHTML = document.getElementById("broadcasts").innerHTML + item + "<br>";
+    });
+    fetchedBroadcasts = true;
+    logToClient("Fetched network broadcasts!");
+}
+
+async function BroadcastListenerLogic() {
+    try {
+        location.reload();
+    }
+    catch(err) {
+        logToClient(err);
+        thrownError = true;
+    }
+}
+
+async function registerBroadcastListener() {
+    try {
+        let contract = DSocialContracts.get("MainContract");
+        contract.on("BroadcastEvent", () => {
+            BroadcastListenerLogic();
+        });
+    }
+    catch(err) {
+        logToClient(err);
+        thrownError = true;
+    }
+}
+
 function logToClient(txt) {
+    console.log(txt);
     document.getElementById("logging").innerHTML = document.getElementById("logging").innerHTML + "[" +(new Date().toLocaleString()) + "] " + txt + "<br>";
+}
+
+async function clear() {
+    document.getElementById("logging").innerHTML = "Client Logs: <br> ";
 }
 
 function sleep(ms) {
