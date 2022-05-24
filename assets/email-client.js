@@ -23,23 +23,25 @@ document.getElementById("CLEARINBOX").addEventListener("click", clearInbox);
 document.getElementById("CLEAR_SENT_ITEMS").addEventListener("click", clearSentItems);
 
 async function connectToWeb3Provider() {
-    logToClient("Connecting to web3 provider...");
-    try {
-        provider = new ethers.providers.Web3Provider(window.ethereum)
-
-        await provider.send("eth_requestAccounts", []);
+    if(thrownError==false) {
+        logToClient("Connecting to web3 provider...");
+        try {
+            provider = new ethers.providers.Web3Provider(window.ethereum)
     
-        signer = provider.getSigner()
+            await provider.send("eth_requestAccounts", []);
+        
+            signer = provider.getSigner()
+        
+            connected = true;
     
-        connected = true;
-
-        logToClient("Connected to web3 provider!");
-    }
-    catch(err) {
-        logToClient("There was an error connecting to web3 provider:");
-        logToClient(err);
-        connected = false;
-        thrownError = true;
+            logToClient("Connected to web3 provider!");
+        }
+        catch(err) {
+            logToClient("There was an error connecting to web3 provider:");
+            logToClient(err);
+            connected = false;
+            thrownError = true;
+        }
     }
 }
 
